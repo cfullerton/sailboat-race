@@ -16,22 +16,23 @@ function Boat(type,name){
 		}else {
 			this.starboard = true;
 		}
+		//this.speed *= 1- tackPenalty;
 	}
 	this.changeLocation = function(){
 		if (this.starboard){
 			this.angle = windDirection -45;
-			offAngle =  0;
+			this.location[0] += Math.cos(Math.abs(360-this.angle) * (180 / Math.PI)) * this.speed; 
+		    this.location[1] -= Math.sin((Math.abs(360-this.angle) * (180 / Math.PI))) * this.speed;
+			console.log((360-this.angle));
 		}else {
 			this.angle = windDirection + 45;
 			offAngle = 2;
+			this.location[0] -= Math.cos(Math.abs(360-this.angle) * (180 / Math.PI)) * this.speed; 
+		this.location[1] -= Math.sin((Math.abs(360-this.angle) * (180 / Math.PI))) * this.speed;
 		}
-		this.location[0] += Math.cos((this.angle * (180 / Math.PI))) * this.speed; 
-		this.location[1] -= Math.sin((this.angle * (180 / Math.PI))) * this.speed;
-		//if (this.element){
-		    this.element.style.left = this.location[0] + "px";
-		    this.element.style.top = this.location[1] + "px";
-			this.element.style.transform = "rotate(" + this.angle + "deg)";
-		//}
+		this.element.style.left = this.location[0] + "px";
+		this.element.style.top = this.location[1] + "px";
+	    this.element.style.transform = "rotate(" + this.angle + "deg)";
 		if (this.speed < topSpeed){
 			this.speed += tackPenalty / 180; 
 		}else if (this.speed > topSpeed){
@@ -41,9 +42,9 @@ function Boat(type,name){
 }
 function move(){
 	for (var i=0;i<boatList.length;i++){
-		boatList[i].changeLocation();
-		
+		boatList[i].changeLocation();		
 	}
+	//windDirection+=0.1;
 }
 var player = new Boat(true,"player");
 var computer = new Boat(false,"com0");
