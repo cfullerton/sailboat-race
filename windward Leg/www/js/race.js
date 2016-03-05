@@ -1,7 +1,7 @@
 var topSpeed = 0.5;
 var tackPenalty = 0.25;
 var boatList =[];
-var windDirection = 90;
+var windDirection = 360;
 function Boat(type,name){
 	this.name = name;
 	this.playable = type;
@@ -20,14 +20,14 @@ function Boat(type,name){
 		if (this.starboard){
 			this.angle = windDirection -45;
 		}else {
-			this.angle = windDirection + 45;
+			this.angle = 360 - windDirection + 45;
 		}
 		this.location[0] = this.location[0] - Math.cos(this.angle) * this.speed;
 		this.location[1] = this.location[1] - Math.sin(this.angle) * this.speed;
 		//if (this.element){
 		    this.element.style.left = this.location[0] + "px";
 		    this.element.style.top = this.location[1] + "px";
-			console.log(this.location[0]);
+			console.log(this.angle);
 		//}
 		if (this.speed < topSpeed){
 			this.speed += tackPenalty / 180; 
