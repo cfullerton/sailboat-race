@@ -1,4 +1,4 @@
-var topSpeed = 0.5;
+var topSpeed = 1;
 var tackPenalty = 0.25;
 var boatList =[];
 var windDirection = 360;
@@ -9,7 +9,6 @@ function Boat(type,name){
 	this.location = [400,600];
 	this.speed = topSpeed;
 	this.angle = 315;
-	var offAngle =0;
 	this.tack = function(){
 		if (this.starboard){
 			this.starboard = false;
@@ -21,14 +20,13 @@ function Boat(type,name){
 	this.changeLocation = function(){
 		if (this.starboard){
 			this.angle = windDirection -45;
-			this.location[0] += Math.cos(Math.abs(360-this.angle) * (180 / Math.PI)) * this.speed; 
-		    this.location[1] -= Math.sin((Math.abs(360-this.angle) * (180 / Math.PI))) * this.speed;
-			console.log((360-this.angle));
+			this.location[1] -= Math.cos(Math.abs(360-this.angle) * (Math.PI/180)) * this.speed; 
+		    this.location[0] -= Math.sin((Math.abs(360-this.angle) * (Math.PI/180))) * this.speed;
+			console.log(Math.abs((360-this.angle)));
 		}else {
 			this.angle = windDirection + 45;
-			offAngle = 2;
-			this.location[0] -= Math.cos(Math.abs(360-this.angle) * (180 / Math.PI)) * this.speed; 
-		this.location[1] -= Math.sin((Math.abs(360-this.angle) * (180 / Math.PI))) * this.speed;
+			this.location[1] -= Math.cos(Math.abs(this.angle-360) * (Math.PI/180)) * this.speed; 
+		this.location[0] += Math.sin((Math.abs(this.angle-360) * (Math.PI/180))) * this.speed;
 		}
 		this.element.style.left = this.location[0] + "px";
 		this.element.style.top = this.location[1] + "px";
@@ -44,18 +42,29 @@ function move(){
 	for (var i=0;i<boatList.length;i++){
 		boatList[i].changeLocation();		
 	}
-	//windDirection+=0.1;
+	windDirection+=0.1;
 }
 var player = new Boat(true,"player");
 var computer = new Boat(false,"com0");
 boatList.push(player);
 boatList.push(computer);
+for (var i=1;i<8;i++){
+	var newBoat = new Boat(false,"com"+i);
+	boatList.push(newBoat);
+}
 for (var i=0;i<boatList.length;i++){
 	var boatElement = document.createElement("div");
 	boatElement.id = boatList[i].name;
 	boatElement.className = "sailBoat";
     document.body.appendChild(boatElement);
+	boatList[i].location[0] = 400 + 20 * i;
 	boatList[i].element = document.getElementById(boatElement.id);
+	boatList[i].element.addEventListener("click", function(){
+		for (boat in boatList){
+			if (boatList[boat].name == this.id ){
+				boatList[boat].tack();				
+			}
+		}
+	});
 }
-document.body.addEventListener("click", function(){player.tack()});
 var going = setInterval(move,15);
