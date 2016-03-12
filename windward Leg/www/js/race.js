@@ -1,5 +1,5 @@
-var topSpeed = 1;
-var tackPenalty = 0.25;
+var topSpeed = 0.5;
+var tackPenalty = 0.25 * topSpeed;
 var boatList =[];
 var windDirection = 360;
 function Boat(type,name){
@@ -38,11 +38,37 @@ function Boat(type,name){
 		}
 	}
 }
+/* controls the random wind Shifts */
+var trendLength = 0;
+var trendingUp = 0;
+var currentStep = 0;
+function windShift(){
+	if (currentStep >= trendLength){
+		trendLength = Math.floor(Math.random()*(45-5+1)+5);
+		trendingUp = Math.floor(Math.random() * 2);
+		currentStep = 0;
+	}else if (currentStep < trendLength / 2){
+		if (trendingUp){
+			windDirection++;
+		}else {
+			windDirection--;
+		}
+		currentStep++;
+	}else if (currentStep >= trendLength / 2){
+		if (trendingUp){
+			windDirection--;
+		}else {
+			windDirection++;
+		}
+		currentStep++;
+	}
+	
+}
 function move(){
 	for (var i=0;i<boatList.length;i++){
 		boatList[i].changeLocation();		
 	}
-	windDirection+=0.1;
+	windShift();
 }
 var player = new Boat(true,"player");
 var computer = new Boat(false,"com0");
@@ -67,4 +93,4 @@ for (var i=0;i<boatList.length;i++){
 		}
 	});
 }
-var going = setInterval(move,15);
+var going = setInterval(move,50);
